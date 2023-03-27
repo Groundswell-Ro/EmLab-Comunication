@@ -1,10 +1,14 @@
 module AuthModule
 {
 	enum LoginResponse { NotIdentified, Identified, LoggedIn, IncorectPassword, ThrottlingActivated };
-	enum RegistrationResponse { UserRegistrationSuccessful ,UserEmailAlreadyExists };
+	enum RegistrationResponse { RegistrationSuccessful ,EmailAlreadyExists, PhoneAlreadyExists };
 	enum ChangePasswordResponse { PasswordChanged, PasswordNotChanged, OldPasswordIncorrect, ThrottlingActivated };
 
-	sequence<byte>	profileImageSq;
+	// sequence<byte>	profileImageSq;
+	// struct ProfileInfo {
+	// 	string userName;
+	// 	profileImageSq	profileImage;
+	// }
 
 	struct ServiceInfo
 	{
@@ -13,56 +17,50 @@ module AuthModule
 		string 	description;
 		int		price;
 	}
-	sequence<ServiceInfo> ServiceInfoSq;
+	sequence<ServiceInfo> ServicesInfoSq;
 
 	struct UserServices
 	{
 		string userName;
-		ServiceInfoSq userServices;
+		string userPhone;
+		ServicesInfoSq servicesInfoSq;
 	}
-	sequence<UserServices> UserServicesSq;
+	sequence<UserServices> UsersServicesSq;
 
-	struct ProfileInfo {
-		string userName;
-		profileImageSq	profileImage;
-	}
-
-	struct StructLoginInfo
+	struct LoginInfo
 	{
-		string userEmail;
-		string userPassword;
+		string email;
+		string password;
 	}
 
-	struct StructRegistrationInfo
+	struct RegistrationInfo
 	{
-		string userName;
-		StructLoginInfo structLoginInfo;
+		string name;
+		string email;
+		string phone;
+		string password;
 	}
 
-	struct StructLoginReturn
+	struct LoginReturn
 	{
-		string userName;
-		string userToken;
+		string name;
+		string token;
 		LoginResponse loginResponse;
+		ServicesInfoSq servicesInfoSq;
 	}
 
-	struct StructRegistrationReturn
-	{
-		StructLoginReturn structLoginReturn;
-		RegistrationResponse registrationResponse;
-	}
-		
     interface AuthInterface
     {
-        StructLoginReturn tryLogin(StructLoginInfo structLoginInfo);
-		StructRegistrationReturn tryRegister(StructRegistrationInfo structRegistrationInfo);
-		ChangePasswordResponse tryChangePassword(string userToken, string oldPassword, string newPassword);
+        LoginReturn loginUser(LoginInfo loginInfo);
+		RegistrationResponse registerUser(RegistrationInfo registrationInfo);
+		ChangePasswordResponse changePassword(string userToken, string oldPassword, string newPassword);
 		
-		void addUserService(string userToken, ServiceInfo userServiceInfo);
+		void addUserService(string userToken, ServiceInfo ServiceInfo);
 		void removeUserService(string userToken, int userServiceId);
 		void updateUserService(string userToken, ServiceInfo userServiceInfo);
-		ServiceInfoSq getSelfServices(string userToken);
-		UserServices getUserServicesFromUserName(string userName);
+
+		ServicesInfoSq getSelfServices(string userToken);
+		UserServices getUserServicesByEmail(string email);
 
 
 		string getUserName(string userToken);
