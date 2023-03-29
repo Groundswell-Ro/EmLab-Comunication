@@ -89,7 +89,7 @@ module EventDataModule
 		EventDataPack getEventData(string userToken, int eventId);
 		SeqEventDataPack getTenEvents(string userToken, int offset);
 
-        void registerEvent(string userToken, EventDataPack eventDataPack);
+        EventDataPack registerEvent(string userToken, EventDataPack eventDataPack);
 		void modifyEventIntField(string userToken, int eventId, EventField field, int newValue );
 		void modifyEventStringField(string userToken, int eventId, EventField field ,string newValue);
 		void modifyEventDoubleField(string userToken, int eventId, EventField field , double newValue);
