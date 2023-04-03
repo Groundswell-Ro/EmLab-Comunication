@@ -44,6 +44,7 @@ module AuthModule
 	struct LoginReturn
 	{
 		string name;
+		string email;
 		string token;
 		LoginResponse loginResponse;
 		ServicesInfoSq servicesInfoSq;
