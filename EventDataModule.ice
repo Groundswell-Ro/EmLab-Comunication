@@ -87,7 +87,7 @@ module EventDataModule
 		SeqClients getClientsByPhone(string userToken, string partialPhone);
 
 		EventDataPack getEventData(string userToken, int eventId);
-		SeqEventDataPack getTenEvents(string userToken, int offset);
+		SeqEventDataPack getTenEvents(string userToken, string fromDate,int offset);
 
         EventDataPack registerEvent(string userToken, EventDataPack eventDataPack);
 		void modifyEventIntField(string userToken, int eventId, EventField field, int newValue );
