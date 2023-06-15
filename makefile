@@ -1,4 +1,4 @@
-ICEFILE = AuthModule.ice EventDataModule.ice
+ICEFILE = $(wildcard *.ice)
 
 gen : 
 	slice2cpp $(ICEFILE)

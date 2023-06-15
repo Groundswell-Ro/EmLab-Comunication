@@ -83,42 +83,7 @@ enum class ChangePasswordResponse : unsigned char
     ThrottlingActivated
 };
 
-struct ServiceInfo
-{
-    int id;
-    ::std::string title;
-    ::std::string description;
-    int price;
-
-    /**
-     * Obtains a tuple containing all of the struct's data members.
-     * @return The data members in a tuple.
-     */
-    std::tuple<const int&, const ::std::string&, const ::std::string&, const int&> ice_tuple() const
-    {
-        return std::tie(id, title, description, price);
-    }
-};
-
-using ServicesInfoSq = ::std::vector<ServiceInfo>;
-
-struct UserServices
-{
-    ::std::string userName;
-    ::std::string userPhone;
-    ::AuthModule::ServicesInfoSq servicesInfoSq;
-
-    /**
-     * Obtains a tuple containing all of the struct's data members.
-     * @return The data members in a tuple.
-     */
-    std::tuple<const ::std::string&, const ::std::string&, const ::AuthModule::ServicesInfoSq&> ice_tuple() const
-    {
-        return std::tie(userName, userPhone, servicesInfoSq);
-    }
-};
-
-using UsersServicesSq = ::std::vector<UserServices>;
+using ImageData = ::std::vector<::Ice::Byte>;
 
 struct LoginInfo
 {
@@ -138,6 +103,7 @@ struct LoginInfo
 struct RegistrationInfo
 {
     ::std::string name;
+    ::AuthModule::ImageData photo;
     ::std::string email;
     ::std::string phone;
     ::std::string password;
@@ -146,27 +112,27 @@ struct RegistrationInfo
      * Obtains a tuple containing all of the struct's data members.
      * @return The data members in a tuple.
      */
-    std::tuple<const ::std::string&, const ::std::string&, const ::std::string&, const ::std::string&> ice_tuple() const
+    std::tuple<const ::std::string&, const ::AuthModule::ImageData&, const ::std::string&, const ::std::string&, const ::std::string&> ice_tuple() const
     {
-        return std::tie(name, email, phone, password);
+        return std::tie(name, photo, email, phone, password);
     }
 };
 
 struct LoginReturn
 {
+    ::AuthModule::ImageData photo;
     ::std::string name;
     ::std::string email;
     ::std::string token;
     ::AuthModule::LoginResponse loginResponse;
-    ::AuthModule::ServicesInfoSq servicesInfoSq;
 
     /**
      * Obtains a tuple containing all of the struct's data members.
      * @return The data members in a tuple.
      */
-    std::tuple<const ::std::string&, const ::std::string&, const ::std::string&, const ::AuthModule::LoginResponse&, const ::AuthModule::ServicesInfoSq&> ice_tuple() const
+    std::tuple<const ::AuthModule::ImageData&, const ::std::string&, const ::std::string&, const ::std::string&, const ::AuthModule::LoginResponse&> ice_tuple() const
     {
-        return std::tie(name, email, token, loginResponse, servicesInfoSq);
+        return std::tie(photo, name, email, token, loginResponse);
     }
 };
 
@@ -229,31 +195,6 @@ public:
     virtual ChangePasswordResponse changePassword(::std::string userToken, ::std::string oldPassword, ::std::string newPassword, const ::Ice::Current& current) = 0;
     /// \cond INTERNAL
     bool _iceD_changePassword(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual void addUserService(::std::string userToken, ServiceInfo ServiceInfo, const ::Ice::Current& current) = 0;
-    /// \cond INTERNAL
-    bool _iceD_addUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual void removeUserService(::std::string userToken, int userServiceId, const ::Ice::Current& current) = 0;
-    /// \cond INTERNAL
-    bool _iceD_removeUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual void updateUserService(::std::string userToken, ServiceInfo userServiceInfo, const ::Ice::Current& current) = 0;
-    /// \cond INTERNAL
-    bool _iceD_updateUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual ServicesInfoSq getSelfServices(::std::string userToken, const ::Ice::Current& current) = 0;
-    /// \cond INTERNAL
-    bool _iceD_getSelfServices(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual UserServices getUserServicesByEmail(::std::string email, const ::Ice::Current& current) = 0;
-    /// \cond INTERNAL
-    bool _iceD_getUserServicesByEmail(::IceInternal::Incoming&, const ::Ice::Current&);
     /// \endcond
 
     virtual ::std::string getUserName(::std::string userToken, const ::Ice::Current& current) = 0;
@@ -353,136 +294,6 @@ public:
     void _iceI_changePassword(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::AuthModule::ChangePasswordResponse>>&, const ::std::string&, const ::std::string&, const ::std::string&, const ::Ice::Context&);
     /// \endcond
 
-    void addUserService(const ::std::string& userToken, const ServiceInfo& ServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        _makePromiseOutgoing<void>(true, this, &AuthInterfacePrx::_iceI_addUserService, userToken, ServiceInfo, context).get();
-    }
-
-    template<template<typename> class P = ::std::promise>
-    auto addUserServiceAsync(const ::std::string& userToken, const ServiceInfo& ServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-        -> decltype(::std::declval<P<void>>().get_future())
-    {
-        return _makePromiseOutgoing<void, P>(false, this, &AuthInterfacePrx::_iceI_addUserService, userToken, ServiceInfo, context);
-    }
-
-    ::std::function<void()>
-    addUserServiceAsync(const ::std::string& userToken, const ServiceInfo& ServiceInfo,
-                        ::std::function<void()> response,
-                        ::std::function<void(::std::exception_ptr)> ex = nullptr,
-                        ::std::function<void(bool)> sent = nullptr,
-                        const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makeLamdaOutgoing<void>(std::move(response), std::move(ex), std::move(sent), this, &AuthModule::AuthInterfacePrx::_iceI_addUserService, userToken, ServiceInfo, context);
-    }
-
-    /// \cond INTERNAL
-    void _iceI_addUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>&, const ::std::string&, const ServiceInfo&, const ::Ice::Context&);
-    /// \endcond
-
-    void removeUserService(const ::std::string& userToken, int userServiceId, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        _makePromiseOutgoing<void>(true, this, &AuthInterfacePrx::_iceI_removeUserService, userToken, userServiceId, context).get();
-    }
-
-    template<template<typename> class P = ::std::promise>
-    auto removeUserServiceAsync(const ::std::string& userToken, int userServiceId, const ::Ice::Context& context = ::Ice::noExplicitContext)
-        -> decltype(::std::declval<P<void>>().get_future())
-    {
-        return _makePromiseOutgoing<void, P>(false, this, &AuthInterfacePrx::_iceI_removeUserService, userToken, userServiceId, context);
-    }
-
-    ::std::function<void()>
-    removeUserServiceAsync(const ::std::string& userToken, int userServiceId,
-                           ::std::function<void()> response,
-                           ::std::function<void(::std::exception_ptr)> ex = nullptr,
-                           ::std::function<void(bool)> sent = nullptr,
-                           const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makeLamdaOutgoing<void>(std::move(response), std::move(ex), std::move(sent), this, &AuthModule::AuthInterfacePrx::_iceI_removeUserService, userToken, userServiceId, context);
-    }
-
-    /// \cond INTERNAL
-    void _iceI_removeUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>&, const ::std::string&, int, const ::Ice::Context&);
-    /// \endcond
-
-    void updateUserService(const ::std::string& userToken, const ServiceInfo& userServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        _makePromiseOutgoing<void>(true, this, &AuthInterfacePrx::_iceI_updateUserService, userToken, userServiceInfo, context).get();
-    }
-
-    template<template<typename> class P = ::std::promise>
-    auto updateUserServiceAsync(const ::std::string& userToken, const ServiceInfo& userServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-        -> decltype(::std::declval<P<void>>().get_future())
-    {
-        return _makePromiseOutgoing<void, P>(false, this, &AuthInterfacePrx::_iceI_updateUserService, userToken, userServiceInfo, context);
-    }
-
-    ::std::function<void()>
-    updateUserServiceAsync(const ::std::string& userToken, const ServiceInfo& userServiceInfo,
-                           ::std::function<void()> response,
-                           ::std::function<void(::std::exception_ptr)> ex = nullptr,
-                           ::std::function<void(bool)> sent = nullptr,
-                           const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makeLamdaOutgoing<void>(std::move(response), std::move(ex), std::move(sent), this, &AuthModule::AuthInterfacePrx::_iceI_updateUserService, userToken, userServiceInfo, context);
-    }
-
-    /// \cond INTERNAL
-    void _iceI_updateUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>&, const ::std::string&, const ServiceInfo&, const ::Ice::Context&);
-    /// \endcond
-
-    ServicesInfoSq getSelfServices(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makePromiseOutgoing<::AuthModule::ServicesInfoSq>(true, this, &AuthInterfacePrx::_iceI_getSelfServices, userToken, context).get();
-    }
-
-    template<template<typename> class P = ::std::promise>
-    auto getSelfServicesAsync(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
-        -> decltype(::std::declval<P<::AuthModule::ServicesInfoSq>>().get_future())
-    {
-        return _makePromiseOutgoing<::AuthModule::ServicesInfoSq, P>(false, this, &AuthInterfacePrx::_iceI_getSelfServices, userToken, context);
-    }
-
-    ::std::function<void()>
-    getSelfServicesAsync(const ::std::string& userToken,
-                         ::std::function<void(::AuthModule::ServicesInfoSq)> response,
-                         ::std::function<void(::std::exception_ptr)> ex = nullptr,
-                         ::std::function<void(bool)> sent = nullptr,
-                         const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makeLamdaOutgoing<::AuthModule::ServicesInfoSq>(std::move(response), std::move(ex), std::move(sent), this, &AuthModule::AuthInterfacePrx::_iceI_getSelfServices, userToken, context);
-    }
-
-    /// \cond INTERNAL
-    void _iceI_getSelfServices(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::AuthModule::ServicesInfoSq>>&, const ::std::string&, const ::Ice::Context&);
-    /// \endcond
-
-    UserServices getUserServicesByEmail(const ::std::string& email, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makePromiseOutgoing<::AuthModule::UserServices>(true, this, &AuthInterfacePrx::_iceI_getUserServicesByEmail, email, context).get();
-    }
-
-    template<template<typename> class P = ::std::promise>
-    auto getUserServicesByEmailAsync(const ::std::string& email, const ::Ice::Context& context = ::Ice::noExplicitContext)
-        -> decltype(::std::declval<P<::AuthModule::UserServices>>().get_future())
-    {
-        return _makePromiseOutgoing<::AuthModule::UserServices, P>(false, this, &AuthInterfacePrx::_iceI_getUserServicesByEmail, email, context);
-    }
-
-    ::std::function<void()>
-    getUserServicesByEmailAsync(const ::std::string& email,
-                                ::std::function<void(::AuthModule::UserServices)> response,
-                                ::std::function<void(::std::exception_ptr)> ex = nullptr,
-                                ::std::function<void(bool)> sent = nullptr,
-                                const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _makeLamdaOutgoing<::AuthModule::UserServices>(std::move(response), std::move(ex), std::move(sent), this, &AuthModule::AuthInterfacePrx::_iceI_getUserServicesByEmail, email, context);
-    }
-
-    /// \cond INTERNAL
-    void _iceI_getUserServicesByEmail(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::AuthModule::UserServices>>&, const ::std::string&, const ::Ice::Context&);
-    /// \endcond
-
     ::std::string getUserName(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
     {
         return _makePromiseOutgoing<::std::string>(true, this, &AuthInterfacePrx::_iceI_getUserName, userToken, context).get();
@@ -562,40 +373,6 @@ struct StreamableTraits< ::AuthModule::ChangePasswordResponse>
 };
 
 template<>
-struct StreamableTraits<::AuthModule::ServiceInfo>
-{
-    static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 10;
-    static const bool fixedLength = false;
-};
-
-template<typename S>
-struct StreamReader<::AuthModule::ServiceInfo, S>
-{
-    static void read(S* istr, ::AuthModule::ServiceInfo& v)
-    {
-        istr->readAll(v.id, v.title, v.description, v.price);
-    }
-};
-
-template<>
-struct StreamableTraits<::AuthModule::UserServices>
-{
-    static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 3;
-    static const bool fixedLength = false;
-};
-
-template<typename S>
-struct StreamReader<::AuthModule::UserServices, S>
-{
-    static void read(S* istr, ::AuthModule::UserServices& v)
-    {
-        istr->readAll(v.userName, v.userPhone, v.servicesInfoSq);
-    }
-};
-
-template<>
 struct StreamableTraits<::AuthModule::LoginInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
@@ -616,7 +393,7 @@ template<>
 struct StreamableTraits<::AuthModule::RegistrationInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 4;
+    static const int minWireSize = 5;
     static const bool fixedLength = false;
 };
 
@@ -625,7 +402,7 @@ struct StreamReader<::AuthModule::RegistrationInfo, S>
 {
     static void read(S* istr, ::AuthModule::RegistrationInfo& v)
     {
-        istr->readAll(v.name, v.email, v.phone, v.password);
+        istr->readAll(v.name, v.photo, v.email, v.phone, v.password);
     }
 };
 
@@ -642,7 +419,7 @@ struct StreamReader<::AuthModule::LoginReturn, S>
 {
     static void read(S* istr, ::AuthModule::LoginReturn& v)
     {
-        istr->readAll(v.name, v.email, v.token, v.loginResponse, v.servicesInfoSq);
+        istr->readAll(v.photo, v.name, v.email, v.token, v.loginResponse);
     }
 };
 
@@ -720,107 +497,7 @@ enum ChangePasswordResponse
     ThrottlingActivated
 };
 
-struct ServiceInfo
-{
-    ::Ice::Int id;
-    ::std::string title;
-    ::std::string description;
-    ::Ice::Int price;
-
-    bool operator==(const ServiceInfo& rhs_) const
-    {
-        if(this == &rhs_)
-        {
-            return true;
-        }
-        if(id != rhs_.id)
-        {
-            return false;
-        }
-        if(title != rhs_.title)
-        {
-            return false;
-        }
-        if(description != rhs_.description)
-        {
-            return false;
-        }
-        if(price != rhs_.price)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    bool operator<(const ServiceInfo& rhs_) const
-    {
-        if(this == &rhs_)
-        {
-            return false;
-        }
-        if(id < rhs_.id)
-        {
-            return true;
-        }
-        else if(rhs_.id < id)
-        {
-            return false;
-        }
-        if(title < rhs_.title)
-        {
-            return true;
-        }
-        else if(rhs_.title < title)
-        {
-            return false;
-        }
-        if(description < rhs_.description)
-        {
-            return true;
-        }
-        else if(rhs_.description < description)
-        {
-            return false;
-        }
-        if(price < rhs_.price)
-        {
-            return true;
-        }
-        else if(rhs_.price < price)
-        {
-            return false;
-        }
-        return false;
-    }
-
-    bool operator!=(const ServiceInfo& rhs_) const
-    {
-        return !operator==(rhs_);
-    }
-    bool operator<=(const ServiceInfo& rhs_) const
-    {
-        return operator<(rhs_) || operator==(rhs_);
-    }
-    bool operator>(const ServiceInfo& rhs_) const
-    {
-        return !operator<(rhs_) && !operator==(rhs_);
-    }
-    bool operator>=(const ServiceInfo& rhs_) const
-    {
-        return !operator<(rhs_);
-    }
-};
-
-typedef ::std::vector<ServiceInfo> ServicesInfoSq;
-
-struct UserServices
-{
-    ::std::string userName;
-    ::std::string userPhone;
-    ::AuthModule::ServicesInfoSq servicesInfoSq;
-};
-
-typedef ::std::vector<UserServices> UsersServicesSq;
+typedef ::std::vector< ::Ice::Byte> ImageData;
 
 struct LoginInfo
 {
@@ -890,101 +567,19 @@ struct LoginInfo
 struct RegistrationInfo
 {
     ::std::string name;
+    ::AuthModule::ImageData photo;
     ::std::string email;
     ::std::string phone;
     ::std::string password;
-
-    bool operator==(const RegistrationInfo& rhs_) const
-    {
-        if(this == &rhs_)
-        {
-            return true;
-        }
-        if(name != rhs_.name)
-        {
-            return false;
-        }
-        if(email != rhs_.email)
-        {
-            return false;
-        }
-        if(phone != rhs_.phone)
-        {
-            return false;
-        }
-        if(password != rhs_.password)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    bool operator<(const RegistrationInfo& rhs_) const
-    {
-        if(this == &rhs_)
-        {
-            return false;
-        }
-        if(name < rhs_.name)
-        {
-            return true;
-        }
-        else if(rhs_.name < name)
-        {
-            return false;
-        }
-        if(email < rhs_.email)
-        {
-            return true;
-        }
-        else if(rhs_.email < email)
-        {
-            return false;
-        }
-        if(phone < rhs_.phone)
-        {
-            return true;
-        }
-        else if(rhs_.phone < phone)
-        {
-            return false;
-        }
-        if(password < rhs_.password)
-        {
-            return true;
-        }
-        else if(rhs_.password < password)
-        {
-            return false;
-        }
-        return false;
-    }
-
-    bool operator!=(const RegistrationInfo& rhs_) const
-    {
-        return !operator==(rhs_);
-    }
-    bool operator<=(const RegistrationInfo& rhs_) const
-    {
-        return operator<(rhs_) || operator==(rhs_);
-    }
-    bool operator>(const RegistrationInfo& rhs_) const
-    {
-        return !operator<(rhs_) && !operator==(rhs_);
-    }
-    bool operator>=(const RegistrationInfo& rhs_) const
-    {
-        return !operator<(rhs_);
-    }
 };
 
 struct LoginReturn
 {
+    ::AuthModule::ImageData photo;
     ::std::string name;
     ::std::string email;
     ::std::string token;
     ::AuthModule::LoginResponse loginResponse;
-    ::AuthModule::ServicesInfoSq servicesInfoSq;
 };
 
 }
@@ -1015,46 +610,6 @@ typedef ::IceUtil::Handle< Callback_AuthInterface_registerUser_Base> Callback_Au
  */
 class Callback_AuthInterface_changePassword_Base : public virtual ::IceInternal::CallbackBase { };
 typedef ::IceUtil::Handle< Callback_AuthInterface_changePassword_Base> Callback_AuthInterface_changePasswordPtr;
-
-/**
- * Base class for asynchronous callback wrapper classes used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_addUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_addUserService.
- */
-class Callback_AuthInterface_addUserService_Base : public virtual ::IceInternal::CallbackBase { };
-typedef ::IceUtil::Handle< Callback_AuthInterface_addUserService_Base> Callback_AuthInterface_addUserServicePtr;
-
-/**
- * Base class for asynchronous callback wrapper classes used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_removeUserService.
- */
-class Callback_AuthInterface_removeUserService_Base : public virtual ::IceInternal::CallbackBase { };
-typedef ::IceUtil::Handle< Callback_AuthInterface_removeUserService_Base> Callback_AuthInterface_removeUserServicePtr;
-
-/**
- * Base class for asynchronous callback wrapper classes used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_updateUserService.
- */
-class Callback_AuthInterface_updateUserService_Base : public virtual ::IceInternal::CallbackBase { };
-typedef ::IceUtil::Handle< Callback_AuthInterface_updateUserService_Base> Callback_AuthInterface_updateUserServicePtr;
-
-/**
- * Base class for asynchronous callback wrapper classes used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getSelfServices.
- */
-class Callback_AuthInterface_getSelfServices_Base : public virtual ::IceInternal::CallbackBase { };
-typedef ::IceUtil::Handle< Callback_AuthInterface_getSelfServices_Base> Callback_AuthInterface_getSelfServicesPtr;
-
-/**
- * Base class for asynchronous callback wrapper classes used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getUserServicesByEmail.
- */
-class Callback_AuthInterface_getUserServicesByEmail_Base : public virtual ::IceInternal::CallbackBase { };
-typedef ::IceUtil::Handle< Callback_AuthInterface_getUserServicesByEmail_Base> Callback_AuthInterface_getUserServicesByEmailPtr;
 
 /**
  * Base class for asynchronous callback wrapper classes used for calls to
@@ -1190,196 +745,6 @@ private:
 
 public:
 
-    void addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        end_addUserService(_iceI_begin_addUserService(userToken, ServiceInfo, context, ::IceInternal::dummyCallback, 0, true));
-    }
-
-    ::Ice::AsyncResultPtr begin_addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _iceI_begin_addUserService(userToken, ServiceInfo, context, ::IceInternal::dummyCallback, 0);
-    }
-
-    ::Ice::AsyncResultPtr begin_addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_addUserService(userToken, ServiceInfo, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_addUserService(userToken, ServiceInfo, context, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::AuthModule::Callback_AuthInterface_addUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_addUserService(userToken, ServiceInfo, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_addUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& ServiceInfo, const ::Ice::Context& context, const ::AuthModule::Callback_AuthInterface_addUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_addUserService(userToken, ServiceInfo, context, cb, cookie);
-    }
-
-    void end_addUserService(const ::Ice::AsyncResultPtr& result);
-
-private:
-
-    ::Ice::AsyncResultPtr _iceI_begin_addUserService(const ::std::string&, const ::AuthModule::ServiceInfo&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
-
-public:
-
-    void removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        end_removeUserService(_iceI_begin_removeUserService(userToken, userServiceId, context, ::IceInternal::dummyCallback, 0, true));
-    }
-
-    ::Ice::AsyncResultPtr begin_removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _iceI_begin_removeUserService(userToken, userServiceId, context, ::IceInternal::dummyCallback, 0);
-    }
-
-    ::Ice::AsyncResultPtr begin_removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_removeUserService(userToken, userServiceId, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_removeUserService(userToken, userServiceId, context, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::AuthModule::Callback_AuthInterface_removeUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_removeUserService(userToken, userServiceId, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::Context& context, const ::AuthModule::Callback_AuthInterface_removeUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_removeUserService(userToken, userServiceId, context, cb, cookie);
-    }
-
-    void end_removeUserService(const ::Ice::AsyncResultPtr& result);
-
-private:
-
-    ::Ice::AsyncResultPtr _iceI_begin_removeUserService(const ::std::string&, ::Ice::Int, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
-
-public:
-
-    void updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        end_updateUserService(_iceI_begin_updateUserService(userToken, userServiceInfo, context, ::IceInternal::dummyCallback, 0, true));
-    }
-
-    ::Ice::AsyncResultPtr begin_updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _iceI_begin_updateUserService(userToken, userServiceInfo, context, ::IceInternal::dummyCallback, 0);
-    }
-
-    ::Ice::AsyncResultPtr begin_updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_updateUserService(userToken, userServiceInfo, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_updateUserService(userToken, userServiceInfo, context, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::AuthModule::Callback_AuthInterface_updateUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_updateUserService(userToken, userServiceInfo, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_updateUserService(const ::std::string& userToken, const ::AuthModule::ServiceInfo& userServiceInfo, const ::Ice::Context& context, const ::AuthModule::Callback_AuthInterface_updateUserServicePtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_updateUserService(userToken, userServiceInfo, context, cb, cookie);
-    }
-
-    void end_updateUserService(const ::Ice::AsyncResultPtr& result);
-
-private:
-
-    ::Ice::AsyncResultPtr _iceI_begin_updateUserService(const ::std::string&, const ::AuthModule::ServiceInfo&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
-
-public:
-
-    ::AuthModule::ServicesInfoSq getSelfServices(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return end_getSelfServices(_iceI_begin_getSelfServices(userToken, context, ::IceInternal::dummyCallback, 0, true));
-    }
-
-    ::Ice::AsyncResultPtr begin_getSelfServices(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _iceI_begin_getSelfServices(userToken, context, ::IceInternal::dummyCallback, 0);
-    }
-
-    ::Ice::AsyncResultPtr begin_getSelfServices(const ::std::string& userToken, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getSelfServices(userToken, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getSelfServices(const ::std::string& userToken, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getSelfServices(userToken, context, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getSelfServices(const ::std::string& userToken, const ::AuthModule::Callback_AuthInterface_getSelfServicesPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getSelfServices(userToken, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getSelfServices(const ::std::string& userToken, const ::Ice::Context& context, const ::AuthModule::Callback_AuthInterface_getSelfServicesPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getSelfServices(userToken, context, cb, cookie);
-    }
-
-    ::AuthModule::ServicesInfoSq end_getSelfServices(const ::Ice::AsyncResultPtr& result);
-
-private:
-
-    ::Ice::AsyncResultPtr _iceI_begin_getSelfServices(const ::std::string&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
-
-public:
-
-    ::AuthModule::UserServices getUserServicesByEmail(const ::std::string& email, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return end_getUserServicesByEmail(_iceI_begin_getUserServicesByEmail(email, context, ::IceInternal::dummyCallback, 0, true));
-    }
-
-    ::Ice::AsyncResultPtr begin_getUserServicesByEmail(const ::std::string& email, const ::Ice::Context& context = ::Ice::noExplicitContext)
-    {
-        return _iceI_begin_getUserServicesByEmail(email, context, ::IceInternal::dummyCallback, 0);
-    }
-
-    ::Ice::AsyncResultPtr begin_getUserServicesByEmail(const ::std::string& email, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getUserServicesByEmail(email, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getUserServicesByEmail(const ::std::string& email, const ::Ice::Context& context, const ::Ice::CallbackPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getUserServicesByEmail(email, context, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getUserServicesByEmail(const ::std::string& email, const ::AuthModule::Callback_AuthInterface_getUserServicesByEmailPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getUserServicesByEmail(email, ::Ice::noExplicitContext, cb, cookie);
-    }
-
-    ::Ice::AsyncResultPtr begin_getUserServicesByEmail(const ::std::string& email, const ::Ice::Context& context, const ::AuthModule::Callback_AuthInterface_getUserServicesByEmailPtr& cb, const ::Ice::LocalObjectPtr& cookie = 0)
-    {
-        return _iceI_begin_getUserServicesByEmail(email, context, cb, cookie);
-    }
-
-    ::AuthModule::UserServices end_getUserServicesByEmail(const ::Ice::AsyncResultPtr& result);
-
-private:
-
-    ::Ice::AsyncResultPtr _iceI_begin_getUserServicesByEmail(const ::std::string&, const ::Ice::Context&, const ::IceInternal::CallbackBasePtr&, const ::Ice::LocalObjectPtr& cookie = 0, bool sync = false);
-
-public:
-
     ::std::string getUserName(const ::std::string& userToken, const ::Ice::Context& context = ::Ice::noExplicitContext)
     {
         return end_getUserName(_iceI_begin_getUserName(userToken, context, ::IceInternal::dummyCallback, 0, true));
@@ -1496,31 +861,6 @@ public:
     bool _iceD_changePassword(::IceInternal::Incoming&, const ::Ice::Current&);
     /// \endcond
 
-    virtual void addUserService(const ::std::string& userToken, const ServiceInfo& ServiceInfo, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
-    /// \cond INTERNAL
-    bool _iceD_addUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual void removeUserService(const ::std::string& userToken, ::Ice::Int userServiceId, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
-    /// \cond INTERNAL
-    bool _iceD_removeUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual void updateUserService(const ::std::string& userToken, const ServiceInfo& userServiceInfo, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
-    /// \cond INTERNAL
-    bool _iceD_updateUserService(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual ServicesInfoSq getSelfServices(const ::std::string& userToken, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
-    /// \cond INTERNAL
-    bool _iceD_getSelfServices(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
-    virtual UserServices getUserServicesByEmail(const ::std::string& email, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
-    /// \cond INTERNAL
-    bool _iceD_getUserServicesByEmail(::IceInternal::Incoming&, const ::Ice::Current&);
-    /// \endcond
-
     virtual ::std::string getUserName(const ::std::string& userToken, const ::Ice::Current& current = ::Ice::emptyCurrent) = 0;
     /// \cond INTERNAL
     bool _iceD_getUserName(::IceInternal::Incoming&, const ::Ice::Current&);
@@ -1587,68 +927,6 @@ struct StreamableTraits< ::AuthModule::ChangePasswordResponse>
 };
 
 template<>
-struct StreamableTraits< ::AuthModule::ServiceInfo>
-{
-    static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 10;
-    static const bool fixedLength = false;
-};
-
-template<typename S>
-struct StreamWriter< ::AuthModule::ServiceInfo, S>
-{
-    static void write(S* ostr, const ::AuthModule::ServiceInfo& v)
-    {
-        ostr->write(v.id);
-        ostr->write(v.title);
-        ostr->write(v.description);
-        ostr->write(v.price);
-    }
-};
-
-template<typename S>
-struct StreamReader< ::AuthModule::ServiceInfo, S>
-{
-    static void read(S* istr, ::AuthModule::ServiceInfo& v)
-    {
-        istr->read(v.id);
-        istr->read(v.title);
-        istr->read(v.description);
-        istr->read(v.price);
-    }
-};
-
-template<>
-struct StreamableTraits< ::AuthModule::UserServices>
-{
-    static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 3;
-    static const bool fixedLength = false;
-};
-
-template<typename S>
-struct StreamWriter< ::AuthModule::UserServices, S>
-{
-    static void write(S* ostr, const ::AuthModule::UserServices& v)
-    {
-        ostr->write(v.userName);
-        ostr->write(v.userPhone);
-        ostr->write(v.servicesInfoSq);
-    }
-};
-
-template<typename S>
-struct StreamReader< ::AuthModule::UserServices, S>
-{
-    static void read(S* istr, ::AuthModule::UserServices& v)
-    {
-        istr->read(v.userName);
-        istr->read(v.userPhone);
-        istr->read(v.servicesInfoSq);
-    }
-};
-
-template<>
 struct StreamableTraits< ::AuthModule::LoginInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
@@ -1680,7 +958,7 @@ template<>
 struct StreamableTraits< ::AuthModule::RegistrationInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 4;
+    static const int minWireSize = 5;
     static const bool fixedLength = false;
 };
 
@@ -1690,6 +968,7 @@ struct StreamWriter< ::AuthModule::RegistrationInfo, S>
     static void write(S* ostr, const ::AuthModule::RegistrationInfo& v)
     {
         ostr->write(v.name);
+        ostr->write(v.photo);
         ostr->write(v.email);
         ostr->write(v.phone);
         ostr->write(v.password);
@@ -1702,6 +981,7 @@ struct StreamReader< ::AuthModule::RegistrationInfo, S>
     static void read(S* istr, ::AuthModule::RegistrationInfo& v)
     {
         istr->read(v.name);
+        istr->read(v.photo);
         istr->read(v.email);
         istr->read(v.phone);
         istr->read(v.password);
@@ -1721,11 +1001,11 @@ struct StreamWriter< ::AuthModule::LoginReturn, S>
 {
     static void write(S* ostr, const ::AuthModule::LoginReturn& v)
     {
+        ostr->write(v.photo);
         ostr->write(v.name);
         ostr->write(v.email);
         ostr->write(v.token);
         ostr->write(v.loginResponse);
-        ostr->write(v.servicesInfoSq);
     }
 };
 
@@ -1734,11 +1014,11 @@ struct StreamReader< ::AuthModule::LoginReturn, S>
 {
     static void read(S* istr, ::AuthModule::LoginReturn& v)
     {
+        istr->read(v.photo);
         istr->read(v.name);
         istr->read(v.email);
         istr->read(v.token);
         istr->read(v.loginResponse);
-        istr->read(v.servicesInfoSq);
     }
 };
 
@@ -2202,778 +1482,6 @@ template<class T, typename CT> Callback_AuthInterface_changePasswordPtr
 newCallback_AuthInterface_changePassword(T* instance, void (T::*cb)(ChangePasswordResponse, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
 {
     return new Callback_AuthInterface_changePassword<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_addUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_addUserService.
- */
-template<class T>
-class CallbackNC_AuthInterface_addUserService : public Callback_AuthInterface_addUserService_Base, public ::IceInternal::OnewayCallbackNC<T>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception&);
-    typedef void (T::*Sent)(bool);
-    typedef void (T::*Response)();
-
-    CallbackNC_AuthInterface_addUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallbackNC<T>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_addUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_addUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(T* instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_addUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(T* instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_addUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class with cookie support used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_addUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_addUserService.
- */
-template<class T, typename CT>
-class Callback_AuthInterface_addUserService : public Callback_AuthInterface_addUserService_Base, public ::IceInternal::OnewayCallback<T, CT>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
-    typedef void (T::*Sent)(bool , const CT&);
-    typedef void (T::*Response)(const CT&);
-
-    Callback_AuthInterface_addUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallback<T, CT>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_addUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_addUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(T* instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_addUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_addUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_addUserServicePtr
-newCallback_AuthInterface_addUserService(T* instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_addUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_removeUserService.
- */
-template<class T>
-class CallbackNC_AuthInterface_removeUserService : public Callback_AuthInterface_removeUserService_Base, public ::IceInternal::OnewayCallbackNC<T>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception&);
-    typedef void (T::*Sent)(bool);
-    typedef void (T::*Response)();
-
-    CallbackNC_AuthInterface_removeUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallbackNC<T>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_removeUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_removeUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(T* instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_removeUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(T* instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_removeUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class with cookie support used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_removeUserService.
- */
-template<class T, typename CT>
-class Callback_AuthInterface_removeUserService : public Callback_AuthInterface_removeUserService_Base, public ::IceInternal::OnewayCallback<T, CT>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
-    typedef void (T::*Sent)(bool , const CT&);
-    typedef void (T::*Response)(const CT&);
-
-    Callback_AuthInterface_removeUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallback<T, CT>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_removeUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_removeUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(T* instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_removeUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_removeUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_removeUserServicePtr
-newCallback_AuthInterface_removeUserService(T* instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_removeUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_updateUserService.
- */
-template<class T>
-class CallbackNC_AuthInterface_updateUserService : public Callback_AuthInterface_updateUserService_Base, public ::IceInternal::OnewayCallbackNC<T>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception&);
-    typedef void (T::*Sent)(bool);
-    typedef void (T::*Response)();
-
-    CallbackNC_AuthInterface_updateUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallbackNC<T>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_updateUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_updateUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(T* instance, void (T::*cb)(), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_updateUserService<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(T* instance, void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_updateUserService<T>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class with cookie support used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_updateUserService.
- */
-template<class T, typename CT>
-class Callback_AuthInterface_updateUserService : public Callback_AuthInterface_updateUserService_Base, public ::IceInternal::OnewayCallback<T, CT>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
-    typedef void (T::*Sent)(bool , const CT&);
-    typedef void (T::*Response)(const CT&);
-
-    Callback_AuthInterface_updateUserService(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::OnewayCallback<T, CT>(obj, cb, excb, sentcb)
-    {
-    }
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(const IceUtil::Handle<T>& instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_updateUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(const IceUtil::Handle<T>& instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_updateUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(T* instance, void (T::*cb)(const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_updateUserService<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_updateUserService.
- */
-template<class T, typename CT> Callback_AuthInterface_updateUserServicePtr
-newCallback_AuthInterface_updateUserService(T* instance, void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_updateUserService<T, CT>(instance, 0, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getSelfServices.
- */
-template<class T>
-class CallbackNC_AuthInterface_getSelfServices : public Callback_AuthInterface_getSelfServices_Base, public ::IceInternal::TwowayCallbackNC<T>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception&);
-    typedef void (T::*Sent)(bool);
-    typedef void (T::*Response)(const ServicesInfoSq&);
-
-    CallbackNC_AuthInterface_getSelfServices(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::TwowayCallbackNC<T>(obj, cb != 0, excb, sentcb), _response(cb)
-    {
-    }
-
-    /// \cond INTERNAL
-    virtual void completed(const ::Ice::AsyncResultPtr& result) const
-    {
-        AuthInterfacePrx proxy = AuthInterfacePrx::uncheckedCast(result->getProxy());
-        ServicesInfoSq ret;
-        try
-        {
-            ret = proxy->end_getSelfServices(result);
-        }
-        catch(const ::Ice::Exception& ex)
-        {
-            ::IceInternal::CallbackNC<T>::exception(result, ex);
-            return;
-        }
-        if(_response)
-        {
-            (::IceInternal::CallbackNC<T>::_callback.get()->*_response)(ret);
-        }
-    }
-    /// \endcond
-
-private:
-
-    Response _response;
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- */
-template<class T> Callback_AuthInterface_getSelfServicesPtr
-newCallback_AuthInterface_getSelfServices(const IceUtil::Handle<T>& instance, void (T::*cb)(const ServicesInfoSq&), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_getSelfServices<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- */
-template<class T> Callback_AuthInterface_getSelfServicesPtr
-newCallback_AuthInterface_getSelfServices(T* instance, void (T::*cb)(const ServicesInfoSq&), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_getSelfServices<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class with cookie support used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getSelfServices.
- */
-template<class T, typename CT>
-class Callback_AuthInterface_getSelfServices : public Callback_AuthInterface_getSelfServices_Base, public ::IceInternal::TwowayCallback<T, CT>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
-    typedef void (T::*Sent)(bool , const CT&);
-    typedef void (T::*Response)(const ServicesInfoSq&, const CT&);
-
-    Callback_AuthInterface_getSelfServices(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::TwowayCallback<T, CT>(obj, cb != 0, excb, sentcb), _response(cb)
-    {
-    }
-
-    /// \cond INTERNAL
-    virtual void completed(const ::Ice::AsyncResultPtr& result) const
-    {
-        AuthInterfacePrx proxy = AuthInterfacePrx::uncheckedCast(result->getProxy());
-        ServicesInfoSq ret;
-        try
-        {
-            ret = proxy->end_getSelfServices(result);
-        }
-        catch(const ::Ice::Exception& ex)
-        {
-            ::IceInternal::Callback<T, CT>::exception(result, ex);
-            return;
-        }
-        if(_response)
-        {
-            (::IceInternal::Callback<T, CT>::_callback.get()->*_response)(ret, CT::dynamicCast(result->getCookie()));
-        }
-    }
-    /// \endcond
-
-private:
-
-    Response _response;
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- */
-template<class T, typename CT> Callback_AuthInterface_getSelfServicesPtr
-newCallback_AuthInterface_getSelfServices(const IceUtil::Handle<T>& instance, void (T::*cb)(const ServicesInfoSq&, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_getSelfServices<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getSelfServices.
- */
-template<class T, typename CT> Callback_AuthInterface_getSelfServicesPtr
-newCallback_AuthInterface_getSelfServices(T* instance, void (T::*cb)(const ServicesInfoSq&, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_getSelfServices<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getUserServicesByEmail.
- */
-template<class T>
-class CallbackNC_AuthInterface_getUserServicesByEmail : public Callback_AuthInterface_getUserServicesByEmail_Base, public ::IceInternal::TwowayCallbackNC<T>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception&);
-    typedef void (T::*Sent)(bool);
-    typedef void (T::*Response)(const UserServices&);
-
-    CallbackNC_AuthInterface_getUserServicesByEmail(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::TwowayCallbackNC<T>(obj, cb != 0, excb, sentcb), _response(cb)
-    {
-    }
-
-    /// \cond INTERNAL
-    virtual void completed(const ::Ice::AsyncResultPtr& result) const
-    {
-        AuthInterfacePrx proxy = AuthInterfacePrx::uncheckedCast(result->getProxy());
-        UserServices ret;
-        try
-        {
-            ret = proxy->end_getUserServicesByEmail(result);
-        }
-        catch(const ::Ice::Exception& ex)
-        {
-            ::IceInternal::CallbackNC<T>::exception(result, ex);
-            return;
-        }
-        if(_response)
-        {
-            (::IceInternal::CallbackNC<T>::_callback.get()->*_response)(ret);
-        }
-    }
-    /// \endcond
-
-private:
-
-    Response _response;
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- */
-template<class T> Callback_AuthInterface_getUserServicesByEmailPtr
-newCallback_AuthInterface_getUserServicesByEmail(const IceUtil::Handle<T>& instance, void (T::*cb)(const UserServices&), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_getUserServicesByEmail<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- */
-template<class T> Callback_AuthInterface_getUserServicesByEmailPtr
-newCallback_AuthInterface_getUserServicesByEmail(T* instance, void (T::*cb)(const UserServices&), void (T::*excb)(const ::Ice::Exception&), void (T::*sentcb)(bool) = 0)
-{
-    return new CallbackNC_AuthInterface_getUserServicesByEmail<T>(instance, cb, excb, sentcb);
-}
-
-/**
- * Type-safe asynchronous callback wrapper class with cookie support used for calls to
- * IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- * Create a wrapper instance by calling ::AuthModule::newCallback_AuthInterface_getUserServicesByEmail.
- */
-template<class T, typename CT>
-class Callback_AuthInterface_getUserServicesByEmail : public Callback_AuthInterface_getUserServicesByEmail_Base, public ::IceInternal::TwowayCallback<T, CT>
-{
-public:
-
-    typedef IceUtil::Handle<T> TPtr;
-
-    typedef void (T::*Exception)(const ::Ice::Exception& , const CT&);
-    typedef void (T::*Sent)(bool , const CT&);
-    typedef void (T::*Response)(const UserServices&, const CT&);
-
-    Callback_AuthInterface_getUserServicesByEmail(const TPtr& obj, Response cb, Exception excb, Sent sentcb)
-        : ::IceInternal::TwowayCallback<T, CT>(obj, cb != 0, excb, sentcb), _response(cb)
-    {
-    }
-
-    /// \cond INTERNAL
-    virtual void completed(const ::Ice::AsyncResultPtr& result) const
-    {
-        AuthInterfacePrx proxy = AuthInterfacePrx::uncheckedCast(result->getProxy());
-        UserServices ret;
-        try
-        {
-            ret = proxy->end_getUserServicesByEmail(result);
-        }
-        catch(const ::Ice::Exception& ex)
-        {
-            ::IceInternal::Callback<T, CT>::exception(result, ex);
-            return;
-        }
-        if(_response)
-        {
-            (::IceInternal::Callback<T, CT>::_callback.get()->*_response)(ret, CT::dynamicCast(result->getCookie()));
-        }
-    }
-    /// \endcond
-
-private:
-
-    Response _response;
-};
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- */
-template<class T, typename CT> Callback_AuthInterface_getUserServicesByEmailPtr
-newCallback_AuthInterface_getUserServicesByEmail(const IceUtil::Handle<T>& instance, void (T::*cb)(const UserServices&, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_getUserServicesByEmail<T, CT>(instance, cb, excb, sentcb);
-}
-
-/**
- * Creates a callback wrapper instance that delegates to your object.
- * Use this overload when your callback methods receive a cookie value.
- * @param instance The callback object.
- * @param cb The success method of the callback object.
- * @param excb The exception method of the callback object.
- * @param sentcb The sent method of the callback object.
- * @return An object that can be passed to an asynchronous invocation of IceProxy::AuthModule::AuthInterface::begin_getUserServicesByEmail.
- */
-template<class T, typename CT> Callback_AuthInterface_getUserServicesByEmailPtr
-newCallback_AuthInterface_getUserServicesByEmail(T* instance, void (T::*cb)(const UserServices&, const CT&), void (T::*excb)(const ::Ice::Exception&, const CT&), void (T::*sentcb)(bool, const CT&) = 0)
-{
-    return new Callback_AuthInterface_getUserServicesByEmail<T, CT>(instance, cb, excb, sentcb);
 }
 
 /**

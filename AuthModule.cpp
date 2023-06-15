@@ -54,28 +54,18 @@ const ::std::string iceC_AuthModule_AuthInterface_ids[2] =
 };
 const ::std::string iceC_AuthModule_AuthInterface_ops[] =
 {
-    "addUserService",
     "changePassword",
-    "getSelfServices",
     "getUserName",
-    "getUserServicesByEmail",
     "ice_id",
     "ice_ids",
     "ice_isA",
     "ice_ping",
     "loginUser",
-    "registerUser",
-    "removeUserService",
-    "updateUserService"
+    "registerUser"
 };
 const ::std::string iceC_AuthModule_AuthInterface_loginUser_name = "loginUser";
 const ::std::string iceC_AuthModule_AuthInterface_registerUser_name = "registerUser";
 const ::std::string iceC_AuthModule_AuthInterface_changePassword_name = "changePassword";
-const ::std::string iceC_AuthModule_AuthInterface_addUserService_name = "addUserService";
-const ::std::string iceC_AuthModule_AuthInterface_removeUserService_name = "removeUserService";
-const ::std::string iceC_AuthModule_AuthInterface_updateUserService_name = "updateUserService";
-const ::std::string iceC_AuthModule_AuthInterface_getSelfServices_name = "getSelfServices";
-const ::std::string iceC_AuthModule_AuthInterface_getUserServicesByEmail_name = "getUserServicesByEmail";
 const ::std::string iceC_AuthModule_AuthInterface_getUserName_name = "getUserName";
 
 }
@@ -160,88 +150,6 @@ AuthModule::AuthInterface::_iceD_changePassword(::IceInternal::Incoming& inS, co
 
 /// \cond INTERNAL
 bool
-AuthModule::AuthInterface::_iceD_addUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
-    auto istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    ServiceInfo iceP_ServiceInfo;
-    istr->readAll(iceP_userToken, iceP_ServiceInfo);
-    inS.endReadParams();
-    this->addUserService(::std::move(iceP_userToken), ::std::move(iceP_ServiceInfo), current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_removeUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
-    auto istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    int iceP_userServiceId;
-    istr->readAll(iceP_userToken, iceP_userServiceId);
-    inS.endReadParams();
-    this->removeUserService(::std::move(iceP_userToken), iceP_userServiceId, current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_updateUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
-    auto istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    ServiceInfo iceP_userServiceInfo;
-    istr->readAll(iceP_userToken, iceP_userServiceInfo);
-    inS.endReadParams();
-    this->updateUserService(::std::move(iceP_userToken), ::std::move(iceP_userServiceInfo), current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_getSelfServices(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
-    auto istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    istr->readAll(iceP_userToken);
-    inS.endReadParams();
-    ServicesInfoSq ret = this->getSelfServices(::std::move(iceP_userToken), current);
-    auto ostr = inS.startWriteParams();
-    ostr->writeAll(ret);
-    inS.endWriteParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_getUserServicesByEmail(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
-    auto istr = inS.startReadParams();
-    ::std::string iceP_email;
-    istr->readAll(iceP_email);
-    inS.endReadParams();
-    UserServices ret = this->getUserServicesByEmail(::std::move(iceP_email), current);
-    auto ostr = inS.startWriteParams();
-    ostr->writeAll(ret);
-    inS.endWriteParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
 AuthModule::AuthInterface::_iceD_getUserName(::IceInternal::Incoming& inS, const ::Ice::Current& current)
 {
     _iceCheckMode(::Ice::OperationMode::Normal, current.mode);
@@ -261,7 +169,7 @@ AuthModule::AuthInterface::_iceD_getUserName(::IceInternal::Incoming& inS, const
 bool
 AuthModule::AuthInterface::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_AuthModule_AuthInterface_ops, iceC_AuthModule_AuthInterface_ops + 13, current.operation);
+    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_AuthModule_AuthInterface_ops, iceC_AuthModule_AuthInterface_ops + 8, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -271,55 +179,35 @@ AuthModule::AuthInterface::_iceDispatch(::IceInternal::Incoming& in, const ::Ice
     {
         case 0:
         {
-            return _iceD_addUserService(in, current);
+            return _iceD_changePassword(in, current);
         }
         case 1:
         {
-            return _iceD_changePassword(in, current);
+            return _iceD_getUserName(in, current);
         }
         case 2:
         {
-            return _iceD_getSelfServices(in, current);
+            return _iceD_ice_id(in, current);
         }
         case 3:
         {
-            return _iceD_getUserName(in, current);
+            return _iceD_ice_ids(in, current);
         }
         case 4:
         {
-            return _iceD_getUserServicesByEmail(in, current);
+            return _iceD_ice_isA(in, current);
         }
         case 5:
         {
-            return _iceD_ice_id(in, current);
+            return _iceD_ice_ping(in, current);
         }
         case 6:
         {
-            return _iceD_ice_ids(in, current);
+            return _iceD_loginUser(in, current);
         }
         case 7:
         {
-            return _iceD_ice_isA(in, current);
-        }
-        case 8:
-        {
-            return _iceD_ice_ping(in, current);
-        }
-        case 9:
-        {
-            return _iceD_loginUser(in, current);
-        }
-        case 10:
-        {
             return _iceD_registerUser(in, current);
-        }
-        case 11:
-        {
-            return _iceD_removeUserService(in, current);
-        }
-        case 12:
-        {
-            return _iceD_updateUserService(in, current);
         }
         default:
         {
@@ -374,73 +262,6 @@ AuthModule::AuthInterfacePrx::_iceI_changePassword(const ::std::shared_ptr<::Ice
 
 /// \cond INTERNAL
 void
-AuthModule::AuthInterfacePrx::_iceI_addUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::string& iceP_userToken, const ServiceInfo& iceP_ServiceInfo, const ::Ice::Context& context)
-{
-    outAsync->invoke(iceC_AuthModule_AuthInterface_addUserService_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
-        [&](::Ice::OutputStream* ostr)
-        {
-            ostr->writeAll(iceP_userToken, iceP_ServiceInfo);
-        },
-        nullptr);
-}
-/// \endcond
-
-/// \cond INTERNAL
-void
-AuthModule::AuthInterfacePrx::_iceI_removeUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::string& iceP_userToken, int iceP_userServiceId, const ::Ice::Context& context)
-{
-    outAsync->invoke(iceC_AuthModule_AuthInterface_removeUserService_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
-        [&](::Ice::OutputStream* ostr)
-        {
-            ostr->writeAll(iceP_userToken, iceP_userServiceId);
-        },
-        nullptr);
-}
-/// \endcond
-
-/// \cond INTERNAL
-void
-AuthModule::AuthInterfacePrx::_iceI_updateUserService(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<void>>& outAsync, const ::std::string& iceP_userToken, const ServiceInfo& iceP_userServiceInfo, const ::Ice::Context& context)
-{
-    outAsync->invoke(iceC_AuthModule_AuthInterface_updateUserService_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
-        [&](::Ice::OutputStream* ostr)
-        {
-            ostr->writeAll(iceP_userToken, iceP_userServiceInfo);
-        },
-        nullptr);
-}
-/// \endcond
-
-/// \cond INTERNAL
-void
-AuthModule::AuthInterfacePrx::_iceI_getSelfServices(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::AuthModule::ServicesInfoSq>>& outAsync, const ::std::string& iceP_userToken, const ::Ice::Context& context)
-{
-    _checkTwowayOnly(iceC_AuthModule_AuthInterface_getSelfServices_name);
-    outAsync->invoke(iceC_AuthModule_AuthInterface_getSelfServices_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
-        [&](::Ice::OutputStream* ostr)
-        {
-            ostr->writeAll(iceP_userToken);
-        },
-        nullptr);
-}
-/// \endcond
-
-/// \cond INTERNAL
-void
-AuthModule::AuthInterfacePrx::_iceI_getUserServicesByEmail(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::AuthModule::UserServices>>& outAsync, const ::std::string& iceP_email, const ::Ice::Context& context)
-{
-    _checkTwowayOnly(iceC_AuthModule_AuthInterface_getUserServicesByEmail_name);
-    outAsync->invoke(iceC_AuthModule_AuthInterface_getUserServicesByEmail_name, ::Ice::OperationMode::Normal, ::Ice::FormatType::DefaultFormat, context,
-        [&](::Ice::OutputStream* ostr)
-        {
-            ostr->writeAll(iceP_email);
-        },
-        nullptr);
-}
-/// \endcond
-
-/// \cond INTERNAL
-void
 AuthModule::AuthInterfacePrx::_iceI_getUserName(const ::std::shared_ptr<::IceInternal::OutgoingAsyncT<::std::string>>& outAsync, const ::std::string& iceP_userToken, const ::Ice::Context& context)
 {
     _checkTwowayOnly(iceC_AuthModule_AuthInterface_getUserName_name);
@@ -481,16 +302,6 @@ const ::std::string iceC_AuthModule_AuthInterface_loginUser_name = "loginUser";
 const ::std::string iceC_AuthModule_AuthInterface_registerUser_name = "registerUser";
 
 const ::std::string iceC_AuthModule_AuthInterface_changePassword_name = "changePassword";
-
-const ::std::string iceC_AuthModule_AuthInterface_addUserService_name = "addUserService";
-
-const ::std::string iceC_AuthModule_AuthInterface_removeUserService_name = "removeUserService";
-
-const ::std::string iceC_AuthModule_AuthInterface_updateUserService_name = "updateUserService";
-
-const ::std::string iceC_AuthModule_AuthInterface_getSelfServices_name = "getSelfServices";
-
-const ::std::string iceC_AuthModule_AuthInterface_getUserServicesByEmail_name = "getUserServicesByEmail";
 
 const ::std::string iceC_AuthModule_AuthInterface_getUserName_name = "getUserName";
 
@@ -627,168 +438,6 @@ IceProxy::AuthModule::AuthInterface::end_changePassword(const ::Ice::AsyncResult
 {
     ::Ice::AsyncResult::_check(result, this, iceC_AuthModule_AuthInterface_changePassword_name);
     ::AuthModule::ChangePasswordResponse ret;
-    if(!result->_waitForResponse())
-    {
-        try
-        {
-            result->_throwUserException();
-        }
-        catch(const ::Ice::UserException& ex)
-        {
-            throw ::Ice::UnknownUserException(__FILE__, __LINE__, ex.ice_id());
-        }
-    }
-    ::Ice::InputStream* istr = result->_startReadParams();
-    istr->read(ret);
-    result->_endReadParams();
-    return ret;
-}
-
-::Ice::AsyncResultPtr
-IceProxy::AuthModule::AuthInterface::_iceI_begin_addUserService(const ::std::string& iceP_userToken, const ::AuthModule::ServiceInfo& iceP_ServiceInfo, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
-{
-    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_AuthModule_AuthInterface_addUserService_name, del, cookie, sync);
-    try
-    {
-        result->prepare(iceC_AuthModule_AuthInterface_addUserService_name, ::Ice::Normal, context);
-        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
-        ostr->write(iceP_userToken);
-        ostr->write(iceP_ServiceInfo);
-        result->endWriteParams();
-        result->invoke(iceC_AuthModule_AuthInterface_addUserService_name);
-    }
-    catch(const ::Ice::Exception& ex)
-    {
-        result->abort(ex);
-    }
-    return result;
-}
-
-void
-IceProxy::AuthModule::AuthInterface::end_addUserService(const ::Ice::AsyncResultPtr& result)
-{
-    _end(result, iceC_AuthModule_AuthInterface_addUserService_name);
-}
-
-::Ice::AsyncResultPtr
-IceProxy::AuthModule::AuthInterface::_iceI_begin_removeUserService(const ::std::string& iceP_userToken, ::Ice::Int iceP_userServiceId, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
-{
-    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_AuthModule_AuthInterface_removeUserService_name, del, cookie, sync);
-    try
-    {
-        result->prepare(iceC_AuthModule_AuthInterface_removeUserService_name, ::Ice::Normal, context);
-        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
-        ostr->write(iceP_userToken);
-        ostr->write(iceP_userServiceId);
-        result->endWriteParams();
-        result->invoke(iceC_AuthModule_AuthInterface_removeUserService_name);
-    }
-    catch(const ::Ice::Exception& ex)
-    {
-        result->abort(ex);
-    }
-    return result;
-}
-
-void
-IceProxy::AuthModule::AuthInterface::end_removeUserService(const ::Ice::AsyncResultPtr& result)
-{
-    _end(result, iceC_AuthModule_AuthInterface_removeUserService_name);
-}
-
-::Ice::AsyncResultPtr
-IceProxy::AuthModule::AuthInterface::_iceI_begin_updateUserService(const ::std::string& iceP_userToken, const ::AuthModule::ServiceInfo& iceP_userServiceInfo, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
-{
-    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_AuthModule_AuthInterface_updateUserService_name, del, cookie, sync);
-    try
-    {
-        result->prepare(iceC_AuthModule_AuthInterface_updateUserService_name, ::Ice::Normal, context);
-        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
-        ostr->write(iceP_userToken);
-        ostr->write(iceP_userServiceInfo);
-        result->endWriteParams();
-        result->invoke(iceC_AuthModule_AuthInterface_updateUserService_name);
-    }
-    catch(const ::Ice::Exception& ex)
-    {
-        result->abort(ex);
-    }
-    return result;
-}
-
-void
-IceProxy::AuthModule::AuthInterface::end_updateUserService(const ::Ice::AsyncResultPtr& result)
-{
-    _end(result, iceC_AuthModule_AuthInterface_updateUserService_name);
-}
-
-::Ice::AsyncResultPtr
-IceProxy::AuthModule::AuthInterface::_iceI_begin_getSelfServices(const ::std::string& iceP_userToken, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
-{
-    _checkTwowayOnly(iceC_AuthModule_AuthInterface_getSelfServices_name, sync);
-    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_AuthModule_AuthInterface_getSelfServices_name, del, cookie, sync);
-    try
-    {
-        result->prepare(iceC_AuthModule_AuthInterface_getSelfServices_name, ::Ice::Normal, context);
-        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
-        ostr->write(iceP_userToken);
-        result->endWriteParams();
-        result->invoke(iceC_AuthModule_AuthInterface_getSelfServices_name);
-    }
-    catch(const ::Ice::Exception& ex)
-    {
-        result->abort(ex);
-    }
-    return result;
-}
-
-::AuthModule::ServicesInfoSq
-IceProxy::AuthModule::AuthInterface::end_getSelfServices(const ::Ice::AsyncResultPtr& result)
-{
-    ::Ice::AsyncResult::_check(result, this, iceC_AuthModule_AuthInterface_getSelfServices_name);
-    ::AuthModule::ServicesInfoSq ret;
-    if(!result->_waitForResponse())
-    {
-        try
-        {
-            result->_throwUserException();
-        }
-        catch(const ::Ice::UserException& ex)
-        {
-            throw ::Ice::UnknownUserException(__FILE__, __LINE__, ex.ice_id());
-        }
-    }
-    ::Ice::InputStream* istr = result->_startReadParams();
-    istr->read(ret);
-    result->_endReadParams();
-    return ret;
-}
-
-::Ice::AsyncResultPtr
-IceProxy::AuthModule::AuthInterface::_iceI_begin_getUserServicesByEmail(const ::std::string& iceP_email, const ::Ice::Context& context, const ::IceInternal::CallbackBasePtr& del, const ::Ice::LocalObjectPtr& cookie, bool sync)
-{
-    _checkTwowayOnly(iceC_AuthModule_AuthInterface_getUserServicesByEmail_name, sync);
-    ::IceInternal::OutgoingAsyncPtr result = new ::IceInternal::CallbackOutgoing(this, iceC_AuthModule_AuthInterface_getUserServicesByEmail_name, del, cookie, sync);
-    try
-    {
-        result->prepare(iceC_AuthModule_AuthInterface_getUserServicesByEmail_name, ::Ice::Normal, context);
-        ::Ice::OutputStream* ostr = result->startWriteParams(::Ice::DefaultFormat);
-        ostr->write(iceP_email);
-        result->endWriteParams();
-        result->invoke(iceC_AuthModule_AuthInterface_getUserServicesByEmail_name);
-    }
-    catch(const ::Ice::Exception& ex)
-    {
-        result->abort(ex);
-    }
-    return result;
-}
-
-::AuthModule::UserServices
-IceProxy::AuthModule::AuthInterface::end_getUserServicesByEmail(const ::Ice::AsyncResultPtr& result)
-{
-    ::Ice::AsyncResult::_check(result, this, iceC_AuthModule_AuthInterface_getUserServicesByEmail_name);
-    ::AuthModule::UserServices ret;
     if(!result->_waitForResponse())
     {
         try
@@ -967,91 +616,6 @@ AuthModule::AuthInterface::_iceD_changePassword(::IceInternal::Incoming& inS, co
 
 /// \cond INTERNAL
 bool
-AuthModule::AuthInterface::_iceD_addUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::Normal, current.mode);
-    ::Ice::InputStream* istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    ServiceInfo iceP_ServiceInfo;
-    istr->read(iceP_userToken);
-    istr->read(iceP_ServiceInfo);
-    inS.endReadParams();
-    this->addUserService(iceP_userToken, iceP_ServiceInfo, current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_removeUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::Normal, current.mode);
-    ::Ice::InputStream* istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    ::Ice::Int iceP_userServiceId;
-    istr->read(iceP_userToken);
-    istr->read(iceP_userServiceId);
-    inS.endReadParams();
-    this->removeUserService(iceP_userToken, iceP_userServiceId, current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_updateUserService(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::Normal, current.mode);
-    ::Ice::InputStream* istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    ServiceInfo iceP_userServiceInfo;
-    istr->read(iceP_userToken);
-    istr->read(iceP_userServiceInfo);
-    inS.endReadParams();
-    this->updateUserService(iceP_userToken, iceP_userServiceInfo, current);
-    inS.writeEmptyParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_getSelfServices(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::Normal, current.mode);
-    ::Ice::InputStream* istr = inS.startReadParams();
-    ::std::string iceP_userToken;
-    istr->read(iceP_userToken);
-    inS.endReadParams();
-    ServicesInfoSq ret = this->getSelfServices(iceP_userToken, current);
-    ::Ice::OutputStream* ostr = inS.startWriteParams();
-    ostr->write(ret);
-    inS.endWriteParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
-AuthModule::AuthInterface::_iceD_getUserServicesByEmail(::IceInternal::Incoming& inS, const ::Ice::Current& current)
-{
-    _iceCheckMode(::Ice::Normal, current.mode);
-    ::Ice::InputStream* istr = inS.startReadParams();
-    ::std::string iceP_email;
-    istr->read(iceP_email);
-    inS.endReadParams();
-    UserServices ret = this->getUserServicesByEmail(iceP_email, current);
-    ::Ice::OutputStream* ostr = inS.startWriteParams();
-    ostr->write(ret);
-    inS.endWriteParams();
-    return true;
-}
-/// \endcond
-
-/// \cond INTERNAL
-bool
 AuthModule::AuthInterface::_iceD_getUserName(::IceInternal::Incoming& inS, const ::Ice::Current& current)
 {
     _iceCheckMode(::Ice::Normal, current.mode);
@@ -1071,19 +635,14 @@ namespace
 {
 const ::std::string iceC_AuthModule_AuthInterface_all[] =
 {
-    "addUserService",
     "changePassword",
-    "getSelfServices",
     "getUserName",
-    "getUserServicesByEmail",
     "ice_id",
     "ice_ids",
     "ice_isA",
     "ice_ping",
     "loginUser",
-    "registerUser",
-    "removeUserService",
-    "updateUserService"
+    "registerUser"
 };
 
 }
@@ -1092,7 +651,7 @@ const ::std::string iceC_AuthModule_AuthInterface_all[] =
 bool
 AuthModule::AuthInterface::_iceDispatch(::IceInternal::Incoming& in, const ::Ice::Current& current)
 {
-    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_AuthModule_AuthInterface_all, iceC_AuthModule_AuthInterface_all + 13, current.operation);
+    ::std::pair<const ::std::string*, const ::std::string*> r = ::std::equal_range(iceC_AuthModule_AuthInterface_all, iceC_AuthModule_AuthInterface_all + 8, current.operation);
     if(r.first == r.second)
     {
         throw ::Ice::OperationNotExistException(__FILE__, __LINE__, current.id, current.facet, current.operation);
@@ -1102,55 +661,35 @@ AuthModule::AuthInterface::_iceDispatch(::IceInternal::Incoming& in, const ::Ice
     {
         case 0:
         {
-            return _iceD_addUserService(in, current);
+            return _iceD_changePassword(in, current);
         }
         case 1:
         {
-            return _iceD_changePassword(in, current);
+            return _iceD_getUserName(in, current);
         }
         case 2:
         {
-            return _iceD_getSelfServices(in, current);
+            return _iceD_ice_id(in, current);
         }
         case 3:
         {
-            return _iceD_getUserName(in, current);
+            return _iceD_ice_ids(in, current);
         }
         case 4:
         {
-            return _iceD_getUserServicesByEmail(in, current);
+            return _iceD_ice_isA(in, current);
         }
         case 5:
         {
-            return _iceD_ice_id(in, current);
+            return _iceD_ice_ping(in, current);
         }
         case 6:
         {
-            return _iceD_ice_ids(in, current);
+            return _iceD_loginUser(in, current);
         }
         case 7:
         {
-            return _iceD_ice_isA(in, current);
-        }
-        case 8:
-        {
-            return _iceD_ice_ping(in, current);
-        }
-        case 9:
-        {
-            return _iceD_loginUser(in, current);
-        }
-        case 10:
-        {
             return _iceD_registerUser(in, current);
-        }
-        case 11:
-        {
-            return _iceD_removeUserService(in, current);
-        }
-        case 12:
-        {
-            return _iceD_updateUserService(in, current);
         }
         default:
         {
