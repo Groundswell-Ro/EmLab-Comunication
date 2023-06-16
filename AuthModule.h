@@ -83,6 +83,12 @@ enum class ChangePasswordResponse : unsigned char
     ThrottlingActivated
 };
 
+const ::std::string ADMIN = "admin";
+
+const ::std::string CLIENT = "client";
+
+const ::std::string PROVIDER = "provider";
+
 using ImageData = ::std::vector<::Ice::Byte>;
 
 struct LoginInfo
@@ -107,32 +113,34 @@ struct RegistrationInfo
     ::std::string email;
     ::std::string phone;
     ::std::string password;
+    ::std::string role;
 
     /**
      * Obtains a tuple containing all of the struct's data members.
      * @return The data members in a tuple.
      */
-    std::tuple<const ::std::string&, const ::AuthModule::ImageData&, const ::std::string&, const ::std::string&, const ::std::string&> ice_tuple() const
+    std::tuple<const ::std::string&, const ::AuthModule::ImageData&, const ::std::string&, const ::std::string&, const ::std::string&, const ::std::string&> ice_tuple() const
     {
-        return std::tie(name, photo, email, phone, password);
+        return std::tie(name, photo, email, phone, password, role);
     }
 };
 
 struct LoginReturn
 {
-    ::AuthModule::ImageData photo;
+    ::std::string token;
     ::std::string name;
     ::std::string email;
-    ::std::string token;
+    ::AuthModule::ImageData photo;
+    ::std::string role;
     ::AuthModule::LoginResponse loginResponse;
 
     /**
      * Obtains a tuple containing all of the struct's data members.
      * @return The data members in a tuple.
      */
-    std::tuple<const ::AuthModule::ImageData&, const ::std::string&, const ::std::string&, const ::std::string&, const ::AuthModule::LoginResponse&> ice_tuple() const
+    std::tuple<const ::std::string&, const ::std::string&, const ::std::string&, const ::AuthModule::ImageData&, const ::std::string&, const ::AuthModule::LoginResponse&> ice_tuple() const
     {
-        return std::tie(photo, name, email, token, loginResponse);
+        return std::tie(token, name, email, photo, role, loginResponse);
     }
 };
 
@@ -393,7 +401,7 @@ template<>
 struct StreamableTraits<::AuthModule::RegistrationInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 5;
+    static const int minWireSize = 6;
     static const bool fixedLength = false;
 };
 
@@ -402,7 +410,7 @@ struct StreamReader<::AuthModule::RegistrationInfo, S>
 {
     static void read(S* istr, ::AuthModule::RegistrationInfo& v)
     {
-        istr->readAll(v.name, v.photo, v.email, v.phone, v.password);
+        istr->readAll(v.name, v.photo, v.email, v.phone, v.password, v.role);
     }
 };
 
@@ -410,7 +418,7 @@ template<>
 struct StreamableTraits<::AuthModule::LoginReturn>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 5;
+    static const int minWireSize = 6;
     static const bool fixedLength = false;
 };
 
@@ -419,7 +427,7 @@ struct StreamReader<::AuthModule::LoginReturn, S>
 {
     static void read(S* istr, ::AuthModule::LoginReturn& v)
     {
-        istr->readAll(v.photo, v.name, v.email, v.token, v.loginResponse);
+        istr->readAll(v.token, v.name, v.email, v.photo, v.role, v.loginResponse);
     }
 };
 
@@ -497,6 +505,12 @@ enum ChangePasswordResponse
     ThrottlingActivated
 };
 
+const ::std::string ADMIN = "admin";
+
+const ::std::string CLIENT = "client";
+
+const ::std::string PROVIDER = "provider";
+
 typedef ::std::vector< ::Ice::Byte> ImageData;
 
 struct LoginInfo
@@ -571,14 +585,16 @@ struct RegistrationInfo
     ::std::string email;
     ::std::string phone;
     ::std::string password;
+    ::std::string role;
 };
 
 struct LoginReturn
 {
-    ::AuthModule::ImageData photo;
+    ::std::string token;
     ::std::string name;
     ::std::string email;
-    ::std::string token;
+    ::AuthModule::ImageData photo;
+    ::std::string role;
     ::AuthModule::LoginResponse loginResponse;
 };
 
@@ -958,7 +974,7 @@ template<>
 struct StreamableTraits< ::AuthModule::RegistrationInfo>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 5;
+    static const int minWireSize = 6;
     static const bool fixedLength = false;
 };
 
@@ -972,6 +988,7 @@ struct StreamWriter< ::AuthModule::RegistrationInfo, S>
         ostr->write(v.email);
         ostr->write(v.phone);
         ostr->write(v.password);
+        ostr->write(v.role);
     }
 };
 
@@ -985,6 +1002,7 @@ struct StreamReader< ::AuthModule::RegistrationInfo, S>
         istr->read(v.email);
         istr->read(v.phone);
         istr->read(v.password);
+        istr->read(v.role);
     }
 };
 
@@ -992,7 +1010,7 @@ template<>
 struct StreamableTraits< ::AuthModule::LoginReturn>
 {
     static const StreamHelperCategory helper = StreamHelperCategoryStruct;
-    static const int minWireSize = 5;
+    static const int minWireSize = 6;
     static const bool fixedLength = false;
 };
 
@@ -1001,10 +1019,11 @@ struct StreamWriter< ::AuthModule::LoginReturn, S>
 {
     static void write(S* ostr, const ::AuthModule::LoginReturn& v)
     {
-        ostr->write(v.photo);
+        ostr->write(v.token);
         ostr->write(v.name);
         ostr->write(v.email);
-        ostr->write(v.token);
+        ostr->write(v.photo);
+        ostr->write(v.role);
         ostr->write(v.loginResponse);
     }
 };
@@ -1014,10 +1033,11 @@ struct StreamReader< ::AuthModule::LoginReturn, S>
 {
     static void read(S* istr, ::AuthModule::LoginReturn& v)
     {
-        istr->read(v.photo);
+        istr->read(v.token);
         istr->read(v.name);
         istr->read(v.email);
-        istr->read(v.token);
+        istr->read(v.photo);
+        istr->read(v.role);
         istr->read(v.loginResponse);
     }
 };

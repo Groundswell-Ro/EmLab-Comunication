@@ -3,6 +3,10 @@ module AuthModule
 	enum LoginResponse { NotIdentified, Identified, LoggedIn, IncorectPassword, ThrottlingActivated };
 	enum RegistrationResponse { RegistrationSuccessful ,EmailAlreadyExists, PhoneAlreadyExists };
 	enum ChangePasswordResponse { PasswordChanged, PasswordNotChanged, OldPasswordIncorrect, ThrottlingActivated };
+	
+	const string ADMIN = "admin";
+	const string CLIENT = "client";
+	const string PROVIDER = "provider";
 
 	sequence<byte> ImageData;
 	
@@ -19,14 +23,16 @@ module AuthModule
 		string email;
 		string phone;
 		string password;
+		string role;
 	}
 
 	struct LoginReturn
 	{
-		ImageData photo;
+		string token;
 		string name;
 		string email;
-		string token;
+		ImageData photo;
+		string role;
 		LoginResponse loginResponse;
 	}
 
