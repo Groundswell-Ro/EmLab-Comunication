@@ -1,5 +1,5 @@
 #pragma once
-#include "generated/DataTypes.h"
+#include <comm/DataTypes.h>
 #include <string>
 #include <fstream>
 
