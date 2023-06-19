@@ -28,13 +28,13 @@ HFILES := $(addprefix $(COMMDIR)/, $(HFILES))
 OBJFILE := $(addprefix $(OBJDIR)/, $(OBJFILE)) 
 
 # target that depends on all generated and object files
-all: $(CPPFILES) $(OBJFILE)
+all: $(CPPFILES) $(OBJFILE) 
 	
 # rule to compile .cpp files into .o files
-$(OBJDIR)/%.o: $(COMMDIR)/%.cpp $(COMMDIR)/%.h | gen_dirs
+$(OBJDIR)/%.o: $(COMMDIR)/%.cpp $(COMMDIR)/%.h 
 	$(CC) -c $(CXXFLAGS) -o $@ $<
 
-${OBJDIR}/%.o: ${UTILSDIR}/%.cpp ${UTILSDIR}/%.h | gen_dirs
+${OBJDIR}/%.o: ${UTILSDIR}/%.cpp ${UTILSDIR}/%.h 
 	$(CC) -c $(CXXFLAGS) -o $@ $<
 
 # rule to generate output files for each .ice file
@@ -48,7 +48,7 @@ gen_dirs:
 
 # clean target
 clean:
-	rm $(CPPFILES) $(HFILES) $(OBJFILE)
+	rm -rf $(COMMDIR) $(OBJDIR)
 
 echo:
 	@echo $(ICEFILENODIR)

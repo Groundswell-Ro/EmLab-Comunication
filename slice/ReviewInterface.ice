@@ -15,7 +15,7 @@ module Emlab {
     
 	sequence<ReviewInfo> SeqReviewInfo;
 
-    interface ReviewInterface {
+    interface ReviewInterface { 
         int addReview(string userToken, ReviewInfo reviewInfo);
         void delReview(string userToken, int reviewId);
 
