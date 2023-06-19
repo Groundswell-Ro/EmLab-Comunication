@@ -1,27 +1,36 @@
+# compilation flags
+CXXFLAGS = -I./slice --output-dir $(GENDIR)
 
-# output dir
-OUTDIR = generated
+# Generated files directory
+GENDIR = generated
 
 # Ice files
-ICEFILE = $(wildcard *.ice)
+ICEFILE = $(wildcard slice/*.ice)
 
-# generated .h .cpp files
-CPPFILES = $(ICEFILE:.ice=.cpp)
-HFILES = $(ICEFILE:.ice=.h)
-# add outdir to generated files
-CPPFILES := $(addprefix $(OUTDIR)/, $(CPPFILES))
-HFILES := $(addprefix $(OUTDIR)/, $(HFILES))
+# get slice file names without the slice/ directory
+ICEFILENODIR = $(notdir $(ICEFILE))
 
-CXXFLAGS = -I. --output-dir $(OUTDIR)
+# create naming for .cpp and .h files
+CPPFILES = $(ICEFILENODIR:.ice=.cpp)
+HFILES = $(ICEFILENODIR:.ice=.h)
 
-all : 
-	slice2cpp $(CXXFLAGS) $(ICEFILE)
+# add GENDIR to generated files
+CPPFILES := $(addprefix $(GENDIR)/, $(CPPFILES))
+HFILES := $(addprefix $(GENDIR)/, $(HFILES))
 
-clean :
+# target that depends on all generated files
+all: $(CPPFILES) $(HFILES)
+
+# rule to generate output files for each .ice file
+$(GENDIR)/%.cpp $(GENDIR)/%.h: ./slice/%.ice
+	slice2cpp $(CXXFLAGS) $<
+
+# clean target
+clean:
 	rm $(CPPFILES) $(HFILES)
 
 echo:
 	@echo $(ICEFILE)
+	@echo $(ICEFILENODIR)
 	@echo $(CPPFILES)
 	@echo $(HFILES)
-
