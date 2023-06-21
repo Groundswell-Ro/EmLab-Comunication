@@ -19,6 +19,7 @@ module Emlab
 
 	struct RegistrationInfo
 	{
+		string username;
 		string name;
 		ImageData photo;
 		string email;
@@ -30,16 +31,19 @@ module Emlab
 	struct LoginReturn
 	{
 		string token;
+		string username;
 		string name;
 		string email;
 		ImageData photo;
 		string role;
 		LoginResponse loginResponse;
 	}
+
     interface AuthInterface
     {
         LoginReturn loginUser(LoginInfo loginInfo);
 		RegistrationResponse registerUser(RegistrationInfo registrationInfo);
 		ChangePasswordResponse changePassword(string userToken, string oldPassword, string newPassword);
     }
+
 }

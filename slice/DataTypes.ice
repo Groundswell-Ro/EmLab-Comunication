@@ -9,8 +9,6 @@ module Emlab
 	const string REVIEWADAPTER = "review";
 	const string CLIENTADAPTER = "client";
 
-
-
 	const string TIMEFORMAT = "HH:mm AP";
 	const string DATEFORMAT = "dd/MMM/yyyy";
 	const string DATETIMEFORMAT = "dd/MMM/yyyy HH:mm AP";
