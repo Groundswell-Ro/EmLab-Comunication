@@ -1,3 +1,4 @@
+#pragma once
 #include <DataTypes.ice>
 
 module Emlab
@@ -9,7 +10,7 @@ module Emlab
 
 	enum LoginResponse { NotIdentified, Identified, LoggedIn, IncorectPassword, ThrottlingActivated };
 	enum RegistrationResponse { RegistrationSuccessful ,EmailAlreadyExists, PhoneAlreadyExists };
-	enum ChangePasswordResponse { PasswordChanged, PasswordNotChanged, OldPasswordIncorrect, ThrottlingActivated };
+	enum ChangePasswordResponse { PasswordChanged, PasswordNotChanged, OldPasswordIncorrect};
 	
 	struct LoginInfo
 	{
