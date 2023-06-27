@@ -1,21 +1,21 @@
-#pragma once
-#include <DataTypes.ice>
+// #pragma once
+// #include <DataTypes.ice>
 
-module Emlab {
+// module Emlab {
    
-   interface ServiceInterface {
+//    interface ServiceInterface {
         
-        int addServiceToEvent(string userToken, ServiceInfo serviceInfo);
-        void delService(string userToken, string serviceId);
+//         int addServiceToEvent(string userToken, ServiceInfo serviceInfo);
+//         void delService(string userToken, string serviceId);
 
-        // void setService();
-        // void setServiceCost(string userToken, string serviceId, int cost);
-        // void setServiceDescription(string userToken, string serviceId, string description);
-        void setServiceDate(string userToken, string serviceId, string date);
-        void setServiceTime(string userToken, string serviceId, string time);
-        void setServiceDuration(string userToken, string serviceId, int duration);
-        void setServiceObservations(string userToken, string serviceId, string observations);
-   };
+//         // void setService();
+//         // void setServiceCost(string userToken, string serviceId, int cost);
+//         // void setServiceDescription(string userToken, string serviceId, string description);
+//         void setServiceDate(string userToken, string serviceId, string date);
+//         void setServiceTime(string userToken, string serviceId, string time);
+//         void setServiceDuration(string userToken, string serviceId, int duration);
+//         void setServiceObservations(string userToken, string serviceId, string observations);
+//    };
 
 
-};
+// };
