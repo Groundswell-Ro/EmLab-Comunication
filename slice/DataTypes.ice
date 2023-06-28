@@ -109,6 +109,7 @@ module Emlab
 		string name;
 		string phone;
 		string email;
+		string description;
 	}; 
 
 	struct ProviderServiceInfo
