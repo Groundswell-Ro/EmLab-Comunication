@@ -27,7 +27,8 @@ module Emlab
 	enum LoginResponse { NotIdentified, Identified, LoggedIn, IncorectPassword, ThrottlingActivated };
 	enum RegistrationResponse { RegistrationSuccessful ,EmailAlreadyExists, PhoneAlreadyExists };
 	enum ChangePasswordResponse { PasswordChanged, PasswordNotChanged, OldPasswordIncorrect};
-	
+	enum ChangeUniqueDataResponse {NotChanged, Changed, AllreadyExists};
+	// this enum is for data like email, phone number, name and username
 	// Auth data structures
 	struct LoginInfo
 	{
@@ -49,9 +50,9 @@ module Emlab
 	struct LoginReturn
 	{
 		string token;
-		string username;
-		string name;
 		string email;
+		string name;
+		string phone;
 		string role;
 		LoginResponse loginResponse;
 	}
