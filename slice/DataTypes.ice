@@ -55,6 +55,7 @@ module Emlab
 		string phone;
 		string role;
 		LoginResponse loginResponse;
+		int darkMode;
 	}
 
 
