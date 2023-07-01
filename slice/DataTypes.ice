@@ -47,15 +47,19 @@ module Emlab
 		string role;
 	}
 
-	struct LoginReturn
-	{
-		string token;
+	struct UserInfo {
 		string email;
 		string name;
 		string phone;
 		string role;
+		bool darkMode;
+	}
+
+	struct LoginReturn
+	{
+		string token;
+		UserInfo userInfo;
 		LoginResponse loginResponse;
-		int darkMode;
 	}
 
 
