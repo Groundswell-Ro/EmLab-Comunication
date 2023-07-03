@@ -6,6 +6,7 @@ module Emlab
 
     interface AuthInterface
     {
+		const string AUTHADDAPTER = "authAdapter";
         LoginReturn loginUser(LoginInfo loginInfo);
 		RegistrationResponse registerUser(RegistrationInfo registrationInfo);
 

@@ -5,9 +5,8 @@ module Emlab
 	// Addapters
 	const string AUTHADAPTER = "auth";
 	const string EVENTADAPTER = "event";
-	const string SERVICEADAPTER = "service";
-	const string REVIEWADAPTER = "review";
-	const string CLIENTADAPTER = "client";
+	const string PROVIDERADAPTER = "provider";
+	// const string REVIEWADAPTER = "review";
 
 	// time formats
 	const string TIMEFORMAT = "HH:mm AP";
@@ -63,15 +62,6 @@ module Emlab
 	}
 
 
-    // struct ClientInfo
-	// {
-	// 	int 		id;
-	// 	string		name;
-	// 	string		phone;
-	// 	ImageData	photo;
-	// 	string		specialNote;
-	// }
-	// sequence<ClientInfo> SeqClientInfo;
 
 
 	struct ServiceInfo

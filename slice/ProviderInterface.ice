@@ -5,7 +5,9 @@ module Emlab
 {
 	interface ProviderInterface
 	{
-		void setProviderProfile(string email, ProfileData profileData);
+		void registerProvider(string userToken, ProviderProfileInfo providerProfileInfo);
+		void registerProvicerService(string userToken, ProviderServiceInfo providerService);
+		void addPhotoToService(string userToken, string serviceId, ImageData imageData);
 
         ProviderProfileInfo getProfileInfo(string email);
 		ProfileData getProfileData(string email);
