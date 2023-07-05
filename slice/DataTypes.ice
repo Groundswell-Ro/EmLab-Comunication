@@ -17,6 +17,11 @@ module Emlab
 	sequence<byte> ImageData;
     sequence<ImageData> SeqImageData;
 
+	struct ImageInfo {
+		string name;
+		ImageData data;
+	}
+
 	// user roles
 	const string ADMINROLE = "admin";
 	const string CLIENTROLE = "client";
@@ -37,13 +42,11 @@ module Emlab
 
 	struct RegistrationInfo
 	{
-		string username;
 		string name;
 		ImageData photo;
 		string email;
 		string phone;
 		string password;
-		string role;
 	}
 
 	struct UserInfo {
@@ -60,9 +63,6 @@ module Emlab
 		UserInfo userInfo;
 		LoginResponse loginResponse;
 	}
-
-
-
 
 	struct ServiceInfo
 	{
@@ -110,6 +110,8 @@ module Emlab
 
 	struct ProviderServiceInfo
 	{
+		int id;
+		string providerIdentity;
 		string title;
 		string description;
 		int price;
