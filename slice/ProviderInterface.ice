@@ -6,13 +6,15 @@ module Emlab
 	interface ProviderInterface
 	{
 		int registerProvider(string userToken, ProviderProfileInfo providerProfileInfo);
-		int registerProvicerService(string userToken, ProviderServiceInfo providerService);
-		void addPhotoToService(string userToken, string serviceId, ImageInfo imageInfo);
+		int registerProviderService(string userToken, ProviderServiceInfo providerServiceInfo);
+		void addPhotoToService(string userToken, int serviceId, ImageInfo imageInfo);
 
-		ImageData getProviderProfilePhoto(string userToken, string providerId);
-        ProviderProfileInfo getProfileInfoWithIdentity(string identity);
-		ProviderProfileInfo getProfileInfoWithUsername(string username);
-		SeqProviderServiceInfo getSeqProviderServicesInfo(string username);
+		ProfilePath getProviderProfilePath(int profileId);
 
+		ImageData getProviderProfilePhoto(int profileId);
+        ProviderProfileInfo getProfileAsUser(string userToken);
+        ProviderProfileInfo getProfileAsClient(int profileId);
+		SeqProviderServiceInfo getSeqProviderServices(int profileId);
+		ImageInfo getProviderServicePhoto(int servicePhotoId);
 	}
 }

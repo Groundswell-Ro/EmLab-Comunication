@@ -16,6 +16,7 @@ module Emlab
 	// images data types
 	sequence<byte> ImageData;
     sequence<ImageData> SeqImageData;
+	sequence<int> seqInt;
 
 	struct ImageInfo {
 		string name;
@@ -97,31 +98,39 @@ module Emlab
 	};
 	sequence<EventData> SeqEventData;
 
+	struct ProfilePath
+	{
+		int profileId;
+		string name;
+		int nextProfileId;
+	}
 
 	// provider profile data structures
 	struct ProviderProfileInfo
 	{
+		int id;
 		string username;
 		string name;
 		string phone;
-		string email;
 		string description;
+		string email;
 	}; 
 
 	struct ProviderServiceInfo
 	{
+		int profileId;
 		int id;
-		string providerIdentity;
 		string title;
 		string description;
 		int price;
+		seqInt photoIds;
 	};
 	sequence<ProviderServiceInfo> SeqProviderServiceInfo;
 
 	struct ProfileData
 	{
-		ProviderProfileInfo providerProfileInfo;
-		SeqProviderServiceInfo seqProviderServiceInfo;
+		ProviderProfileInfo profile;
+		SeqProviderServiceInfo services;
 	};
 	
 	struct ReviewInfo {
